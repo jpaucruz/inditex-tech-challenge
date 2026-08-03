@@ -1,0 +1,140 @@
+openapi: 3.0.3
+
+info:
+  title: Applicable Price API
+  description: API for retrieving the applicable price for a product, brand, and application date.
+  version: 1.0.0
+
+tags:
+  - name: Prices
+    description: Applicable price operations
+
+paths:
+  /api/v1/prices:
+    get:
+      tags:
+        - Prices
+      summary: Get the applicable price
+      description: Returns the valid price with the highest priority for the requested product, brand, and application date.
+      operationId: getApplicablePrice
+      parameters:
+        - name: date
+          in: query
+          required: true
+          description: Date using the format yyyy-MM-dd-HH.mm.ss.
+          schema:
+            type: string
+            pattern: '^\d{4}-\d{2}-\d{2}-\d{2}\.\d{2}\.\d{2}$'
+          example: '2020-06-14-16.00.00'
+        - name: productId
+          in: query
+          required: true
+          description: Product identifier.
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+          example: 35455
+        - name: brandId
+          in: query
+          required: true
+          description: Brand identifier.
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+          example: 1
+      responses:
+        '200':
+          description: Applicable price found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceResponse'
+        '400':
+          description: Missing or malformed request parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: No applicable price was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Unexpected internal error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    PriceResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - productId
+        - brandId
+        - priceList
+        - startDate
+        - endDate
+        - price
+        - currency
+      properties:
+        productId:
+          type: integer
+          format: int64
+          example: 35455
+        brandId:
+          type: integer
+          format: int64
+          example: 1
+        priceList:
+          type: integer
+          format: int64
+          example: 2
+        startDate:
+          type: string
+          pattern: '^\d{4}-\d{2}-\d{2}-\d{2}\.\d{2}\.\d{2}$'
+          example: '2020-06-14-15.00.00'
+        endDate:
+          type: string
+          pattern: '^\d{4}-\d{2}-\d{2}-\d{2}\.\d{2}\.\d{2}$'
+          example: '2020-06-14-18.30.00'
+        price:
+          type: number
+          multipleOf: 0.01
+          minimum: 0
+          example: 25.45
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+          pattern: '^[A-Z]{3}$'
+          example: EUR
+
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - message
+        - timestamp
+        - path
+      properties:
+        code:
+          type: string
+          example: PRICE_NOT_FOUND
+        message:
+          type: string
+          example: No applicable price was found.
+        timestamp:
+          type: string
+          format: date-time
+          example: '2026-08-03T17:00:00Z'
+        path:
+          type: string
+          example: /api/v1/prices
