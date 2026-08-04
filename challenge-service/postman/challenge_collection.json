@@ -1,0 +1,495 @@
+{
+  "info": {
+    "_postman_id": "0119d03c-cd71-40db-8613-fbc8776d3332",
+    "name": "Challenge Service",
+    "description": "Applicable price API validation collection.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "productId",
+      "value": "35455"
+    },
+    {
+      "key": "brandId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Required scenarios",
+      "item": [
+        {
+          "name": "14 June at 10:00 - Price list 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Applicable price is correct', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.productId).to.eql(Number(pm.collectionVariables.get('productId')));",
+                  "    pm.expect(body.brandId).to.eql(Number(pm.collectionVariables.get('brandId')));",
+                  "    pm.expect(body.priceList).to.eql(1);",
+                  "    pm.expect(Number(body.price)).to.eql(35.5);",
+                  "    pm.expect(body.currency).to.eql('EUR');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?date=2020-06-14-10.00.00&productId={{productId}}&brandId={{brandId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "prices"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2020-06-14-10.00.00"
+                },
+                {
+                  "key": "productId",
+                  "value": "{{productId}}"
+                },
+                {
+                  "key": "brandId",
+                  "value": "{{brandId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "14 June at 16:00 - Price list 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Applicable price is correct', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.productId).to.eql(Number(pm.collectionVariables.get('productId')));",
+                  "    pm.expect(body.brandId).to.eql(Number(pm.collectionVariables.get('brandId')));",
+                  "    pm.expect(body.priceList).to.eql(2);",
+                  "    pm.expect(Number(body.price)).to.eql(25.45);",
+                  "    pm.expect(body.currency).to.eql('EUR');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?date=2020-06-14-16.00.00&productId={{productId}}&brandId={{brandId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "prices"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2020-06-14-16.00.00"
+                },
+                {
+                  "key": "productId",
+                  "value": "{{productId}}"
+                },
+                {
+                  "key": "brandId",
+                  "value": "{{brandId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "14 June at 21:00 - Price list 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Applicable price is correct', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.productId).to.eql(Number(pm.collectionVariables.get('productId')));",
+                  "    pm.expect(body.brandId).to.eql(Number(pm.collectionVariables.get('brandId')));",
+                  "    pm.expect(body.priceList).to.eql(1);",
+                  "    pm.expect(Number(body.price)).to.eql(35.5);",
+                  "    pm.expect(body.currency).to.eql('EUR');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?date=2020-06-14-21.00.00&productId={{productId}}&brandId={{brandId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "prices"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2020-06-14-21.00.00"
+                },
+                {
+                  "key": "productId",
+                  "value": "{{productId}}"
+                },
+                {
+                  "key": "brandId",
+                  "value": "{{brandId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "15 June at 10:00 - Price list 3",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Applicable price is correct', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.productId).to.eql(Number(pm.collectionVariables.get('productId')));",
+                  "    pm.expect(body.brandId).to.eql(Number(pm.collectionVariables.get('brandId')));",
+                  "    pm.expect(body.priceList).to.eql(3);",
+                  "    pm.expect(Number(body.price)).to.eql(30.5);",
+                  "    pm.expect(body.currency).to.eql('EUR');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?date=2020-06-15-10.00.00&productId={{productId}}&brandId={{brandId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "prices"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2020-06-15-10.00.00"
+                },
+                {
+                  "key": "productId",
+                  "value": "{{productId}}"
+                },
+                {
+                  "key": "brandId",
+                  "value": "{{brandId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "16 June at 21:00 - Price list 4",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Applicable price is correct', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.productId).to.eql(Number(pm.collectionVariables.get('productId')));",
+                  "    pm.expect(body.brandId).to.eql(Number(pm.collectionVariables.get('brandId')));",
+                  "    pm.expect(body.priceList).to.eql(4);",
+                  "    pm.expect(Number(body.price)).to.eql(38.95);",
+                  "    pm.expect(body.currency).to.eql('EUR');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?date=2020-06-16-21.00.00&productId={{productId}}&brandId={{brandId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "prices"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2020-06-16-21.00.00"
+                },
+                {
+                  "key": "productId",
+                  "value": "{{productId}}"
+                },
+                {
+                  "key": "brandId",
+                  "value": "{{brandId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error scenarios",
+      "item": [
+        {
+          "name": "Invalid date format - 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error code is INVALID_REQUEST', function () {",
+                  "    pm.expect(pm.response.json().code).to.eql('INVALID_REQUEST');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?date=2020-06-14-15.00-00&productId={{productId}}&brandId={{brandId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "prices"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2020-06-14-15.00-00"
+                },
+                {
+                  "key": "productId",
+                  "value": "{{productId}}"
+                },
+                {
+                  "key": "brandId",
+                  "value": "{{brandId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Missing brandId - 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error code is INVALID_REQUEST', function () {",
+                  "    pm.expect(pm.response.json().code).to.eql('INVALID_REQUEST');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?date=2020-06-14-16.00.00&productId={{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "prices"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2020-06-14-16.00.00"
+                },
+                {
+                  "key": "productId",
+                  "value": "{{productId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Price not found - 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test('Error code is PRICE_NOT_FOUND', function () {",
+                  "    pm.expect(pm.response.json().code).to.eql('PRICE_NOT_FOUND');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?date=2020-06-14-16.00.00&productId=99999&brandId={{brandId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "prices"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2020-06-14-16.00.00"
+                },
+                {
+                  "key": "productId",
+                  "value": "99999"
+                },
+                {
+                  "key": "brandId",
+                  "value": "{{brandId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
