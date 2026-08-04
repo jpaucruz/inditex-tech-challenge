@@ -96,6 +96,18 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-resttestclient</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-restclient</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -133,6 +145,7 @@
 								<useJackson3>true</useJackson3>
 								<useBeanValidation>true</useBeanValidation>
 								<performBeanValidation>true</performBeanValidation>
+								<useSpringBuiltInValidation>true</useSpringBuiltInValidation>
 								<openApiNullable>false</openApiNullable>
 								<annotationLibrary>swagger2</annotationLibrary>
 								<documentationProvider>springdoc</documentationProvider>

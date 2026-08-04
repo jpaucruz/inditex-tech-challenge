@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.DateTimeException;
@@ -29,6 +30,16 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 "INVALID_APPLICATION_DATE",
                 "The date parameter must use the format yyyy-MM-dd-HH.mm.ss",
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    ResponseEntity<ErrorResponse> handleMethodValidation(HandlerMethodValidationException exception, HttpServletRequest request) {
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                "INVALID_REQUEST",
+                "One or more request parameters are missing or invalid",
                 request.getRequestURI()
         );
     }
