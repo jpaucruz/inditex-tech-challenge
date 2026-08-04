@@ -25,6 +25,10 @@ FROM eclipse-temurin:21-jre AS runtime
 
 WORKDIR /app
 
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y curl \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder \
     --chown=10001:10001 \
     /workspace/target/application.jar \
