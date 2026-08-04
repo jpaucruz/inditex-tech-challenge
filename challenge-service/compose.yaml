@@ -12,3 +12,19 @@ services:
 
     environment:
       SPRING_H2_CONSOLE_SETTINGS_WEB_ALLOW_OTHERS: "true"
+
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - --fail
+        - --silent
+        - --show-error
+        - --max-time
+        - "3"
+        - http://localhost:8080/actuator/health
+
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

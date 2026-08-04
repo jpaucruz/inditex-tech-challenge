@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.time.DateTimeException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
@@ -24,42 +23,17 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.NOT_FOUND, "PRICE_NOT_FOUND", exception.getMessage(), request.getRequestURI());
     }
 
-    @ExceptionHandler(DateTimeParseException.class)
-    ResponseEntity<ErrorResponse> handleInvalidDate(DateTimeException exception, HttpServletRequest request) {
-        return buildErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                "INVALID_APPLICATION_DATE",
-                "The date parameter must use the format yyyy-MM-dd-HH.mm.ss",
-                request.getRequestURI()
-        );
-    }
-
-    @ExceptionHandler(HandlerMethodValidationException.class)
-    ResponseEntity<ErrorResponse> handleMethodValidation(HandlerMethodValidationException exception, HttpServletRequest request) {
+    @ExceptionHandler({
+            HandlerMethodValidationException.class,
+            MissingServletRequestParameterException.class,
+            MethodArgumentTypeMismatchException.class,
+            DateTimeParseException.class
+    })
+    ResponseEntity<ErrorResponse> handleMethodValidation(Exception exception, HttpServletRequest request) {
         return buildErrorResponse(
                 HttpStatus.BAD_REQUEST,
                 "INVALID_REQUEST",
                 "One or more request parameters are missing or invalid",
-                request.getRequestURI()
-        );
-    }
-
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorResponse> handleMissingParameter(MissingServletRequestParameterException exception, HttpServletRequest request) {
-        return buildErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                "MISSING_REQUIRED_PARAMETER",
-                "The query parameter '%s' is required".formatted(exception.getParameterName()),
-                request.getRequestURI()
-        );
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidParameterType(MethodArgumentTypeMismatchException exception, HttpServletRequest request) {
-        return buildErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                "INVALID_PARAMETER",
-                "The query parameter '%s' has an invalid value".formatted(exception.getName()),
                 request.getRequestURI()
         );
     }
