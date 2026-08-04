@@ -18,7 +18,7 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @DataJpaTest(properties = "spring.sql.init.mode=never")
-@Sql("/db/data-test.sql")
+@Sql("/db/integration-data-test.sql")
 class PricePersistenceAdapterIntegrationTest {
 
     private static final Long PRODUCT_ID = 98765L;
