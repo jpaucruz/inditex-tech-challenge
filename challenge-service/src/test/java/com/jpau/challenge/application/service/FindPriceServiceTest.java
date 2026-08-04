@@ -37,7 +37,7 @@ class FindPriceServiceTest {
     }
 
     @Test
-    void shouldReturnApplicablePriceWithHighestPriority() {
+    void shouldReturnPriceWithHighestPriority() {
         // given
         Price standardPrice = generatePrice(1L, 0, "35.50");
         Price promotionalPrice = generatePrice(2L, 1, "25.45");
@@ -51,7 +51,7 @@ class FindPriceServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenNoApplicablePriceExists() {
+    void shouldThrowExceptionWhenNoPriceExists() {
         // given
         when(loadPricesPort.loadPrices(DATE, PRODUCT_ID, BRAND_ID)).thenReturn(List.of());
         // when & then

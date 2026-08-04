@@ -38,10 +38,16 @@
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
-		<!-- openapi validations -->
+		<!-- openapi -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>3.1.0</version>
 		</dependency>
 
 		<!-- database -->
@@ -128,8 +134,8 @@
 								<useBeanValidation>true</useBeanValidation>
 								<performBeanValidation>true</performBeanValidation>
 								<openApiNullable>false</openApiNullable>
-								<annotationLibrary>none</annotationLibrary>
-								<documentationProvider>none</documentationProvider>
+								<annotationLibrary>swagger2</annotationLibrary>
+								<documentationProvider>springdoc</documentationProvider>
 								<useTags>true</useTags>
 								<hideGenerationTimestamp>true</hideGenerationTimestamp>
 							</configOptions>
