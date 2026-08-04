@@ -14,9 +14,9 @@ paths:
     get:
       tags:
         - Prices
-      summary: Get the applicable price
-      description: Returns the valid price with the highest priority for the requested product, brand, and application date.
-      operationId: getApplicablePrice
+      summary: Get the price
+      description: Returns the valid price with the highest priority for the requested product, brand, and date.
+      operationId: findPrice
       parameters:
         - name: date
           in: query
@@ -46,7 +46,7 @@ paths:
           example: 1
       responses:
         '200':
-          description: Applicable price found.
+          description: Price found.
           content:
             application/json:
               schema:
@@ -58,7 +58,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: No applicable price was found.
+          description: No price was found.
           content:
             application/json:
               schema:
@@ -130,7 +130,7 @@ components:
           example: PRICE_NOT_FOUND
         message:
           type: string
-          example: No applicable price was found.
+          example: No price was found.
         timestamp:
           type: string
           format: date-time
