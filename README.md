@@ -806,14 +806,6 @@ Check the state with:
 docker compose ps
 ```
 
-Or:
-
-```bash
-docker inspect \
-  --format='{{.State.Health.Status}}' \
-  challenge-service
-```
-
 Expected result:
 
 ```text
