@@ -465,8 +465,8 @@ Price       -> API response
 **Decision.** Normal execution data and test fixtures are separated.
 
 ```text
-src/main/resources/db/init.sql
-src/test/resources/datasets/
+src/main/resources/db/data.sql
+src/test/resources/db/
 ```
 
 Tests disable normal initialization with:
