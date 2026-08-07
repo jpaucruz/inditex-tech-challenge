@@ -1,6 +1,6 @@
 package com.jpau.challenge.infrastructure.adapter.out.persistence;
 
-import com.jpau.challenge.application.port.out.LoadPricesPort;
+import com.jpau.challenge.application.port.out.LoadPricePort;
 import com.jpau.challenge.domain.model.Price;
 import com.jpau.challenge.infrastructure.adapter.out.persistence.mapper.PricePersistenceMapper;
 import com.jpau.challenge.infrastructure.adapter.out.persistence.repository.PriceRepository;
@@ -13,7 +13,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -27,22 +27,22 @@ class PricePersistenceAdapterIntegrationTest {
     @Autowired
     private PriceRepository repository;
 
-    private LoadPricesPort loadPricesPort;
+    private LoadPricePort loadPricePort;
 
     @BeforeEach
     void setUp() {
         PricePersistenceMapper mapper = Mappers.getMapper(PricePersistenceMapper.class);
-        loadPricesPort = new PricePersistenceAdapter(repository, mapper);
+        loadPricePort = new PricePersistenceAdapter(repository, mapper);
     }
 
     @Test
-    void shouldLoadAllPricesAtRequestedDate() {
+    void shouldLoadPriceWithHighestPriority() {
         // given
         LocalDateTime date = LocalDateTime.of(2024, Month.MARCH, 10, 16, 0);
         // when
-        List<Price> result = loadPricesPort.loadPrices(date,PRODUCT_ID,BRAND_ID);
+        Optional<Price> result = loadPricePort.findPrice(date,PRODUCT_ID,BRAND_ID);
         // then
-        assertThat(result).extracting(Price::priceList).containsExactlyInAnyOrder(101L, 102L);
+        assertThat(result).isPresent();
     }
 
     @Test
@@ -50,17 +50,18 @@ class PricePersistenceAdapterIntegrationTest {
         // given
         LocalDateTime date = LocalDateTime.of(2024, Month.MARCH, 10, 18, 30);
         // when
-        List<Price> result = loadPricesPort.loadPrices(date, PRODUCT_ID, BRAND_ID);
+        Optional<Price> result = loadPricePort.findPrice(date, PRODUCT_ID, BRAND_ID);
         // then
-        assertThat(result).extracting(Price::priceList) .containsExactlyInAnyOrder(101L, 102L);
+        assertThat(result).isPresent();
+        assertThat(result.orElseThrow().priceList()).isEqualTo(102L);
     }
 
     @Test
-    void shouldReturnEmptyListWhenNoPriceExists() {
+    void shouldReturnEmptyWhenNoPriceExists() {
         // given
         LocalDateTime date = LocalDateTime.of(2024, Month.MARCH, 10, 16, 0);
         // when
-        List<Price> result = loadPricesPort.loadPrices(date,99999L, BRAND_ID);
+        Optional<Price> result = loadPricePort.findPrice(date,99999L, BRAND_ID);
         // then
         assertThat(result).isEmpty();
     }

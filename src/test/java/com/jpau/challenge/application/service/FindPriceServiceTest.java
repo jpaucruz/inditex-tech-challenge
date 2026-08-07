@@ -1,7 +1,7 @@
 package com.jpau.challenge.application.service;
 
 import com.jpau.challenge.application.exception.PriceNotFoundException;
-import com.jpau.challenge.application.port.out.LoadPricesPort;
+import com.jpau.challenge.application.port.out.LoadPricePort;
 import com.jpau.challenge.domain.model.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,33 +27,32 @@ class FindPriceServiceTest {
     private static final long BRAND_ID = 1L;
 
     @Mock
-    private LoadPricesPort loadPricesPort;
+    private LoadPricePort loadPricePort;
 
     private FindPriceService service;
 
     @BeforeEach
     void setUp() {
-        service = new FindPriceService(loadPricesPort);
+        service = new FindPriceService(loadPricePort);
     }
 
     @Test
-    void shouldReturnPriceWithHighestPriority() {
+    void shouldReturnPriceWhenPriceExists() {
         // given
-        Price standardPrice = generatePrice(1L, 0, "35.50");
-        Price promotionalPrice = generatePrice(2L, 1, "25.45");
-        when(loadPricesPort.loadPrices(DATE, PRODUCT_ID, BRAND_ID))
-                .thenReturn(List.of(standardPrice, promotionalPrice));
+        Price expectedPrice = generatePrice(2L, 1, "25.45");
+        when(loadPricePort.findPrice(DATE, PRODUCT_ID, BRAND_ID))
+                .thenReturn(Optional.of(expectedPrice));
         // when
         Price result = service.findPrice(DATE, PRODUCT_ID, BRAND_ID);
         // then
-        assertThat(result).isEqualTo(promotionalPrice);
-        verify(loadPricesPort).loadPrices(DATE, PRODUCT_ID, BRAND_ID);
+        assertThat(result).isEqualTo(expectedPrice);
+        verify(loadPricePort).findPrice(DATE, PRODUCT_ID, BRAND_ID);
     }
 
     @Test
     void shouldThrowExceptionWhenNoPriceExists() {
         // given
-        when(loadPricesPort.loadPrices(DATE, PRODUCT_ID, BRAND_ID)).thenReturn(List.of());
+        when(loadPricePort.findPrice(DATE, PRODUCT_ID, BRAND_ID)).thenReturn(Optional.empty());
         // when & then
         assertThatThrownBy(() -> service.findPrice(DATE, PRODUCT_ID, BRAND_ID))
                 .isInstanceOf(PriceNotFoundException.class)
