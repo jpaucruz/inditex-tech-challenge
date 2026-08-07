@@ -30,7 +30,6 @@ The project was built as a technical challenge with a strong focus on:
 - [Postman](#postman)
 - [Development workflow](#development-workflow)
 - [Production considerations](#production-considerations)
-- [Final verification](#final-verification)
 
 ---
 
@@ -354,7 +353,7 @@ REST adapter
   -> persistence adapter
 ```
 
-**Rationale.** The pricing rule can be understood and tested without Spring MVC, JPA, H2, or HTTP models.
+**Rationale.** The application flow and business boundaries can be understood and tested independently from Spring MVC, JPA, H2, or HTTP models. Persistence-specific selection behavior is verified separately through integration tests.
 
 **Trade-off.** This introduces interfaces and mapping classes that would be unnecessary in a very small CRUD-only application. They are accepted here because they make the dependency direction and the business boundary explicit.
 
@@ -375,21 +374,26 @@ This is a project convention for readability, not a requirement of hexagonal arc
 
 **Trade-off.** Bean creation must be configured explicitly instead of relying on component scanning.
 
-### Priority selection belongs to the application core
+### Applicable price selection at persistence level
 
-**Decision.** Persistence determines which prices are applicable. The application determines which applicable price wins.
+**Decision.** Persistence selects the applicable price directly.
+
+The query:
 
 ```text
-Persistence responsibility:
-product + brand + inclusive validity range
-
-Application responsibility:
-maximum priority
+1. filters by product and brand;
+2. applies the inclusive validity range;
+3. orders matching prices by priority descending;
+4. limits the result to one row.
 ```
 
-**Rationale.** “The highest priority wins” is the central business decision of the challenge. Keeping it in the application service makes it visible, reusable, and easy to unit test.
+The output port therefore returns an `Optional<Price>` containing at most one applicable price.
 
-**Trade-off.** The adapter can return several applicable rows instead of asking the database for only one. For the challenge dataset this favors clarity over premature optimization. If profiling showed a large number of overlapping rows, the persistence implementation could be optimized while preserving the port contract.
+**Rationale.** All the information required to identify the applicable price is available to the database. Ordering and limiting the result at persistence level avoids loading several matching rows into application memory only to discard all but the highest-priority one.
+
+The application service remains responsible for the use-case behavior, including translating the absence of an applicable price into the corresponding business exception.
+
+**Trade-off.** The priority rule is less explicit in the application service because part of the selection behavior is implemented by the persistence query. This is accepted because the rule maps naturally to database filtering and ordering and can be verified through persistence integration tests.
 
 ### `LocalDateTime` and the required input format
 
@@ -456,7 +460,7 @@ Price       -> API response
 }
 ```
 
-**Rationale.** The REST adapter remains focused on input, use-case invocation, and output mapping. Clients receive a predictable error contract.
+**Rationale.** Centralizing exception translation keeps the REST adapter focused on request handling, use-case invocation, and response mapping. It also provides clients with a predictable and consistent error contract.
 
 **Trade-off.** Spring MVC can raise several exception types for invalid parameters, so they must be handled explicitly. Unexpected exception details are logged server-side but deliberately not exposed to clients.
 
@@ -486,8 +490,8 @@ and load their own fixtures with `@Sql`.
 **Decision.** The project uses several test levels rather than repeating the same check everywhere.
 
 ```text
-Unit tests        -> Is the business decision correct?
-Integration tests -> Does persistence satisfy its contract?
+Unit tests        -> Does the use case handle persistence results correctly?
+Integration tests -> Does persistence select the correct applicable price?
 Acceptance tests  -> Does the public API behave correctly end to end?
 ArchUnit tests    -> Are architectural boundaries still respected?
 ```
@@ -516,15 +520,6 @@ They verify, among other constraints, that:
 ### Coverage measures manually implemented behavior
 
 **Decision.** JaCoCo excludes OpenAPI-generated models and enforces quality gates on the relevant code.
-
-Current results:
-
-| Metric | Coverage |
-|---|---:|
-| Instructions | `94 %` |
-| Lines | `91.9 %` |
-| Branches | `62 %` |
-| Classes reached | `100 %` |
 
 Quality gates:
 
@@ -566,7 +561,6 @@ Some valid improvements were considered but left outside this iteration:
 - **GitHub Actions:** useful for automatic verification, but deferred to avoid expanding delivery scope.
 - **Maven Failsafe:** useful for separating slower integration and acceptance stages in a larger CI/CD pipeline; Surefire is sufficient for this challenge.
 - **PostgreSQL and Testcontainers:** valuable when production uses PostgreSQL, but H2 is explicitly suitable for this challenge and keeps execution lightweight.
-- **Database-side priority selection:** potentially more efficient at scale, but the application-side rule is clearer and directly testable for the current scope.
 - **Full Actuator exposure:** deliberately avoided to reduce information exposure.
 - **Kubernetes or additional infrastructure:** would add technology without improving the core challenge evaluation.
 
@@ -576,23 +570,29 @@ The goal is to demonstrate engineering judgement, including knowing when **not**
 
 ## Persistence and datasets
 
-The persistence query filters by:
+The persistence query selects the applicable price using:
 
 ```text
 productId
 brandId
 startDate <= requestedDate
 endDate >= requestedDate
+ORDER BY priority DESC
+LIMIT 1
 ```
 
-Priority ordering is deliberately not part of the query because priority resolution belongs to the application service.
+The validity interval is inclusive.
+
+When several prices are applicable for the same product, brand, and date, the database orders them by priority in descending order and returns only the highest-priority one.
+
+This avoids transferring and materializing rows that the application would immediately discard.
 
 ### Application dataset
 
 The application loads the original challenge data from:
 
 ```text
-src/main/resources/db/init.sql
+src/main/resources/db/data.sql
 ```
 
 ### Test datasets
@@ -639,9 +639,9 @@ application service + mocked output port
 
 They validate:
 
-- highest-priority selection;
-- not-found behavior;
-- business logic without Spring or a database.
+- successful return of the price provided by the output port;
+- not-found behavior when persistence returns no applicable price;
+- application behavior without Spring or a database.
 
 ### Persistence integration tests
 
@@ -654,12 +654,17 @@ persistence adapter -> repository -> Hibernate -> H2
 They use:
 
 - `@DataJpaTest`;
-- real JPQL;
+- real JPA/Hibernate queries;
 - real mappings;
 - controlled SQL data;
 - no repository mocks.
 
-They validate filtering and inclusive date boundaries.
+They validate:
+
+- filtering by product and brand;
+- inclusive validity date boundaries;
+- highest-priority selection when several prices are applicable;
+- empty results when no applicable price exists.
 
 ### API acceptance tests
 

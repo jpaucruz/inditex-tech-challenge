@@ -2,20 +2,19 @@ package com.jpau.challenge.application.service;
 
 import com.jpau.challenge.application.exception.PriceNotFoundException;
 import com.jpau.challenge.application.port.in.FindPriceUseCase;
-import com.jpau.challenge.application.port.out.LoadPricesPort;
+import com.jpau.challenge.application.port.out.LoadPricePort;
 import com.jpau.challenge.domain.model.Price;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.Objects;
 
 public final class FindPriceService
         implements FindPriceUseCase {
 
-    private final LoadPricesPort loadPricesPort;
+    private final LoadPricePort loadPricePort;
 
-    public FindPriceService(LoadPricesPort loadPricesPort) {
-        this.loadPricesPort = Objects.requireNonNull(loadPricesPort,"loadPricesPort must not be null");
+    public FindPriceService(LoadPricePort loadPricePort) {
+        this.loadPricePort = Objects.requireNonNull(loadPricePort,"loadPricePort must not be null");
     }
 
     @Override
@@ -24,10 +23,8 @@ public final class FindPriceService
         Objects.requireNonNull(date,"date must not be null");
         Objects.requireNonNull(productId, "productId must not be null");
         Objects.requireNonNull(brandId, "brandId must not be null");
-        return loadPricesPort
-                .loadPrices(date, productId, brandId)
-                .stream()
-                .max(Comparator.comparingInt(Price::priority))
+        return loadPricePort
+                .findPrice(date, productId, brandId)
                 .orElseThrow(() -> new PriceNotFoundException(date, productId, brandId));
     }
 

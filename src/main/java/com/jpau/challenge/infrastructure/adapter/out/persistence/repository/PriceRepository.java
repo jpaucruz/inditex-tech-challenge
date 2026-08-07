@@ -6,11 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
 public interface PriceRepository extends JpaRepository<PriceEntity, Long> {
 
-    // the query only determines which prices are valid. Priority is evaluated by the use case.
     @Query("""
             SELECT price
             FROM PriceEntity price
@@ -18,8 +17,10 @@ public interface PriceRepository extends JpaRepository<PriceEntity, Long> {
               AND price.brandId = :brandId
               AND price.startDate <= :date
               AND price.endDate >= :date
+            ORDER BY price.priority DESC
+            LIMIT 1
             """)
-    List<PriceEntity> findPrices(
+    Optional<PriceEntity> findPrice(
             @Param("date") LocalDateTime date,
             @Param("productId") Long productId,
             @Param("brandId") Long brandId
